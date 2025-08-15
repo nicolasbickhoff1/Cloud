@@ -35,6 +35,7 @@ jobs:
           sudo apt update
           yes 123456 | sudo passwd root
           sudo sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+          sudo mkdir /run/sshd -p
           sudo /usr/sbin/sshd -D &
           yes "" | sudo ssh-keygen
           sleep 60
