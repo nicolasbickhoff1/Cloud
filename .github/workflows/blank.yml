@@ -44,7 +44,8 @@ jobs:
           && sudo apt update \
           && sudo apt install ngrok -y
           ngrok config add-authtoken 31LIbARpjT7EzZwTkP9HYpnrsNW_3j14ancc7YwieRbDq5Lwe
-          yes 123456 | sudo vncserver :1 -xstartup /usr/bin/startxfce4
+          yes 123456 sudo vncpasswd
+          sudo vncserver :1 -xstartup /usr/bin/startxfce4
           sudo apt install novnc -y
           sudo apt install websockify -y
           websockify --web /usr/share/novnc/ 5901 localhost:5901 &
