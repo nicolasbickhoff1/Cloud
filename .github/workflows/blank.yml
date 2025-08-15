@@ -25,7 +25,7 @@ jobs:
           chmod 600 ~/.vnc/passwd
 
           # Inicia o VNC no display :1
-          vncserver :1 -geometry 1280x720 -depth 24 -xstartup /usr/bin/startxfce4
+          vncserver :1 --geometry 1280x720 --depth 24 --xstartup /usr/bin/startxfce4
 
           # Instala ngrok
           curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
