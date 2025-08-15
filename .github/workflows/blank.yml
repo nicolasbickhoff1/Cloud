@@ -34,7 +34,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install openssh-server -y
-          sudo sshd -y
+          sudo sshd &
           yes nicolas | sudo passwd root
           sudo apt install xfce4 xfce4-goodies xfce4-terminal xfce4-whiskermenu-plugin tightvncserver -y
           curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
