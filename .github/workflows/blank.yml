@@ -1,55 +1,45 @@
-# This is a basic workflow to help you get started with Actions
-
 name: VPS cloud
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Setup XFCE + VNC + noVNC + ngrok
         run: |
           sudo apt update
-          sudo apt install openssh-server -y
-          sudo sshd &
-          yes nicolas | sudo passwd root
-          sudo apt install xfce4 xfce4-goodies xfce4-terminal xfce4-whiskermenu-plugin tightvncserver -y
+          sudo apt install -y xfce4 xfce4-goodies xfce4-terminal tightvncserver novnc websockify curl
+
+          # Configurar VNC sem senha
+          mkdir -p ~/.vnc
+          echo "123456" | vncpasswd -f > ~/.vnc/passwd
+          chmod 600 ~/.vnc/passwd
+
+          # Inicia o VNC no display :1
+          vncserver :1 -geometry 1280x720 -depth 24 -xstartup /usr/bin/startxfce4
+
+          # Instala ngrok
           curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
-          |       sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \
-          && echo "deb https://ngrok-agent.s3.amazonaws.com bookworm main" \
-          | sudo tee /etc/apt/sources.list.d/ngrok.list \
-          && sudo apt update \
-          && sudo apt install ngrok -y
+            | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+          echo "deb https://ngrok-agent.s3.amazonaws.com bookworm main" \
+            | sudo tee /etc/apt/sources.list.d/ngrok.list
+          sudo apt update
+          sudo apt install -y ngrok
+
+          # Configura o token do ngrok
           ngrok config add-authtoken 31LIbARpjT7EzZwTkP9HYpnrsNW_3j14ancc7YwieRbDq5Lwe
-          yes 123456 sudo vncpasswd
-          sudo vncserver :1 -xstartup /usr/bin/startxfce4
-          sudo apt install novnc -y
-          sudo apt install websockify -y
+
+          # Inicia noVNC via websockify
           websockify --web /usr/share/novnc/ 5901 localhost:5901 &
-          ngrok http http://localhost:6080
-          
-          
-          
+
+          # Cria túnel ngrok para noVNC
+          ngrok http 5901 --log=stdout &
