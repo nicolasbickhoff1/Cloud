@@ -20,12 +20,13 @@ jobs:
           sudo apt install -y xfce4 xfce4-goodies xfce4-terminal tightvncserver novnc websockify curl
 
           # Configurar VNC sem senha
-          mkdir -p ~/.vnc
-          echo "123456" | vncpasswd -f > ~/.vnc/passwd
-          chmod 600 ~/.vnc/passwd
+          sudo mkdir -p ~/.vnc
+          echo "123456" | sudo vncpasswd -f > ~/.vnc/passwd
+          sudo chmod 600 ~/.vnc/passwd
 
           # Inicia o VNC no display :1
-          vncserver :1 --geometry 1280x720 --depth 24 --xstartup /usr/bin/startxfce4
+          sudo bash -c "echo "startxfce4" > ~/.vnc/xstartup; chmod +x ~/.vnc/xstartup"
+          sudo vncserver :1
 
           # Instala ngrok
           curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
