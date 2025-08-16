@@ -39,4 +39,4 @@ jobs:
           sudo /usr/sbin/sshd -D &
           yes "" | sudo ssh-keygen
           sleep 60
-          ssh -R 2222:localhost:22 nglocalhost.com
+          ssh -o StrictHostKeyChecking=no -t -R 2222:localhost:22 nglocalhost.com
